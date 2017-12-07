@@ -27,7 +27,7 @@
         "properties": {
           "roleDefinitionId": "[variables('owner')]",
           "principalId": "[parameters('principalId')]",
-          "scope": "[resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccountName'))]"
+          "scope": "[concat('/subscriptions/743f6ed6-83a8-46f0-822d-ea93b953952d/resourceGroups/', resourceGroup().location)]"
         }
       }
     ]
