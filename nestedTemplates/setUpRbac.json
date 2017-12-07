@@ -7,12 +7,6 @@
         "metadata": {
           "description": "Principal ID to set the access for"
         }
-      },
-      "storageAccountName": {
-        "type": "string",
-        "metadata": {
-          "description": "The storage account to set access for"
-        }
       }
     },
     "variables": {
@@ -23,11 +17,11 @@
       {
         "apiVersion": "2016-07-01",
         "name": "[variables('RBACResourceName')]",
-        "type": "Microsoft.Storage/storageAccounts/providers/roleAssignments",
+        "type": "Microsoft.Authorization/roleAssignments",
         "properties": {
           "roleDefinitionId": "[variables('owner')]",
           "principalId": "[parameters('principalId')]",
-          "scope": "[concat('/subscriptions/743f6ed6-83a8-46f0-822d-ea93b953952d/resourceGroups/', resourceGroup().location)]"
+          "scope": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name)]"
         }
       }
     ]

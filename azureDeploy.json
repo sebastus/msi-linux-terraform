@@ -87,13 +87,6 @@
         "description": "The VM SKU"
       },
       "defaultValue": "17.10"
-    },
-    "subscriptionID": {
-      "type": "string",
-      "metadata": {
-        "description": "Your azure subscription id."
-      },
-      "defaultValue": "743f6ed6-83a8-46f0-822d-ea93b953952d"
     }
   },
   "variables": {
@@ -130,7 +123,7 @@
     "createVMUrl": "[concat(parameters('_artifactsLocation'), '/nestedTemplates/createVM.json', parameters('_artifactsLocationSasToken'))]",
     "createRBACUrl": "[concat(parameters('_artifactsLocation'), '/nestedTemplates/setUpRbac.json', parameters('_artifactsLocationSasToken'))]",
     "installParm1": "[concat(' -u ', parameters('adminUsername'))]",
-    "installParm2": "[concat(' -s ', parameters('subscriptionID'))]",
+    "installParm2": "[concat(' -s ', subscription().subscriptionId]",
     "installParm3": "[concat(' -a ', variables('stateStorageAccountName'))]"
   },
   "resources": [
@@ -307,9 +300,6 @@
         "parameters": {
           "principalId": {
             "value": "[reference('Microsoft.Resources/deployments/creatingVM', '2016-09-01').outputs.principalId.value]"
-          },
-          "storageAccountName": {
-            "value": "[variables('infraStorageAccountName')]"
           }
         }
       }
