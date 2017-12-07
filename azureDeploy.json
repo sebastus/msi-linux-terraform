@@ -87,10 +87,18 @@
           "description": "The VM SKU"
         },
         "defaultValue": "17.10"
+      },
+      "subscriptionID": {
+        "type": "string",
+        "metadata": {
+          "description": "Your azure subscription id."
+        },
+        "defaultValue": "743f6ed6-83a8-46f0-822d-ea93b953952d"
       }
     },
     "variables": {
-      "storageAccountName": "[take(concat(uniquestring(resourceGroup().id), parameters('dnsLabelPrefix')),24)]",
+      "infraStorageAccountName": "[take(concat('storeinfra', uniquestring(resourceGroup().id), parameters('dnsLabelPrefix')),24)]",
+      "stateStorageAccountName": "[take(concat('storestate', uniquestring(resourceGroup().id), parameters('dnsLabelPrefix')),24)]",
       "nicName": "[concat('nic',uniquestring(resourceGroup().id,deployment().name))]",
       "networkSecurityGroupName": "[concat('nsg',uniquestring(resourceGroup().id,deployment().name))]",
       "addressPrefix": "10.0.0.0/16",
@@ -119,14 +127,30 @@
       "adminPasswordsshPublicKey": "",
       "adminPasswordpassword": "[parameters('adminPasswordorSSHKey')]",
       "containerName": "msi",
-      "createVMUrl": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/createVM.json', parameters('_artifactsLocationSasToken'))]",
-      "createRBACUrl": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/setUpRBAC.json', parameters('_artifactsLocationSasToken'))]"
+      "createVMUrl": "[concat(parameters('_artifactsLocation'), '/nestedTemplates/createVM.json', parameters('_artifactsLocationSasToken'))]",
+      "createRBACUrl": "[concat(parameters('_artifactsLocation'), '/nestedTemplates/setUpRbac.json', parameters('_artifactsLocationSasToken'))]",
+      "installParm1": "[concat(' -u ', parameters('adminUsername')]",
+      "installParm2": "[concat(' -s ', parameters('subscriptionID')]",
+      "installParm3": "[concat(' -a ', variables('stateStorageAccountName'))]",
+      "installParm4": "[concat(' -k ', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('stateStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+      "installParm5": "[concat(' -l ', reference(concat(resourceId('Microsoft.Compute/virtualMachines/', variables('vmName')),'/providers/Microsoft.ManagedIdentity/Identities/default'),'2015-08-31-PREVIEW').principalId)]"
     },
     "resources": [
       {
         "type": "Microsoft.Storage/storageAccounts",
-        "name": "[variables('storageAccountName')]",
-        "apiVersion": "2016-12-01",
+        "name": "[variables('infraStorageAccountName')]",
+        "apiVersion": "2017-06-01",
+        "location": "[parameters('Location')]",
+        "sku": {
+          "name": "Standard_LRS"
+        },
+        "kind": "Storage",
+        "properties": {}
+      },
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "[variables('stateStorageAccountName')]",
+        "apiVersion": "2017-06-01",
         "location": "[parameters('Location')]",
         "sku": {
           "name": "Standard_LRS"
@@ -224,7 +248,7 @@
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2016-09-01",
         "dependsOn": [
-          "[resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+          "[resourceId('Microsoft.Storage/storageAccounts/', variables('infraStorageAccountName'))]",
           "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
         ],
         "properties": {
@@ -251,8 +275,8 @@
             "nicName": {
               "value": "[variables('nicName')]"
             },
-            "storageAccountName": {
-              "value": "[variables('storageAccountName')]"
+            "infraStorageAccountName": {
+              "value": "[variables('infraStorageAccountName')]"
             },
             "linuxConfiguration": {
               "value": "[variables(variables('linuxConfigurationChosen'))]"
@@ -286,8 +310,8 @@
             "principalId": {
               "value": "[reference('Microsoft.Resources/deployments/creatingVM', '2016-09-01').outputs.principalId.value]"
             },
-            "storageAccountName": {
-              "value": "[variables('storageAccountName')]"
+            "infraStorageAccountName": {
+              "value": "[variables('infraStorageAccountName')]"
             }
           }
         }
@@ -307,12 +331,12 @@
           "autoUpgradeMinorVersion": true,
           "settings": {
             "fileUris": [
-              "[concat(parameters('_artifactsLocation'), '/scripts/writeblob.sh', parameters('_artifactsLocationSasToken'))]",
-              "[concat(parameters('_artifactsLocation'), '/scripts/install-and-run-cli-2.sh', parameters('_artifactsLocationSasToken'))]"
+              "[concat(parameters('_artifactsLocation'), '/scripts/infra.sh', parameters('_artifactsLocationSasToken'))]",
+              "[concat(parameters('_artifactsLocation'), '/scripts/install.sh', parameters('_artifactsLocationSasToken'))]"
             ]
           },
           "protectedSettings": {
-            "commandToExecute": "[concat('./install-and-run-cli-2.sh -i \"', parameters('azureCLI2DockerImage'),'\" -a \"', variables('storageAccountName'), '\" -c \"', variables('containerName'), '\" -r \"', resourceGroup().Name,'\"')]"
+            "commandToExecute": "[concat('bash infra.sh && bash install.sh ', installParm1, installParm2, installParm3, installParm4, installParm5)]"
           }
         }
       }
