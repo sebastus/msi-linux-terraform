@@ -78,10 +78,10 @@ while getopts :s:a:k:l:u: optname; do
   esac
 done
 
-TEMPLATEFOLDER = "/home/$USERNAME/tfTemplate"
-REMOTESTATEFILE = "$TEMPLATEFOLDER/remoteState.tf"
-ACCESSKEYFILE = "/home/$USERNAME/access_key"
-TFENVFILE = "/home/$USERNAME/tfEnv.sh"
+TEMPLATEFOLDER="/home/$USERNAME/tfTemplate"
+REMOTESTATEFILE="$TEMPLATEFOLDER/remoteState.tf"
+ACCESSKEYFILE="/home/$USERNAME/access_key"
+TFENVFILE="/home/$USERNAME/tfEnv.sh"
 
 mkdir $TEMPLATEFOLDER
 
