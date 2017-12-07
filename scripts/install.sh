@@ -82,11 +82,12 @@ TEMPLATEFOLDER="/home/$USERNAME/tfTemplate"
 REMOTESTATEFILE="$TEMPLATEFOLDER/remoteState.tf"
 ACCESSKEYFILE="/home/$USERNAME/access_key"
 TFENVFILE="/home/$USERNAME/tfEnv.sh"
+CREDSFILE="$TEMPLATEFOLDER/azureProviderAndCreds.tf"
 
 mkdir $TEMPLATEFOLDER
 
-cp ./azureProviderAndCreds.tf /home/tfuser/tfTemplate
-chmod 666 /home/tfuser/tfTemplate/azureProviderAndCreds.tf 
+cp ./azureProviderAndCreds.tf $TEMPLATEFOLDER
+chmod 666 $CREDSFILE
 
 touch $REMOTESTATEFILE
 echo "terraform {"                                          >> $REMOTESTATEFILE
