@@ -123,7 +123,7 @@
     "createVMUrl": "[concat(parameters('_artifactsLocation'), '/nestedTemplates/createVM.json', parameters('_artifactsLocationSasToken'))]",
     "createRBACUrl": "[concat(parameters('_artifactsLocation'), '/nestedTemplates/setUpRbac.json', parameters('_artifactsLocationSasToken'))]",
     "installParm1": "[concat(' -u ', parameters('adminUsername'))]",
-    "installParm2": "[concat(' -s ', subscription().subscriptionId]",
+    "installParm2": "[concat(' -s ', subscription().subscriptionId)]",
     "installParm3": "[concat(' -a ', variables('stateStorageAccountName'))]"
   },
   "resources": [
