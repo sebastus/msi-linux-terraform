@@ -44,12 +44,12 @@
         "metadata": {
           "description": "The size of the VM to create"
         },
-        "defaultValue": "Standard_DS1_V2"
+        "defaultValue": "Standard_D1_V2"
       },
       "azureCLI2DockerImage": {
         "type": "string",
         "metadata": {
-          "description": "The Docker image to rin the azure CLI from"
+          "description": "The Docker image to run the azure CLI from"
         },
         "defaultValue": "azuresdk/azure-cli-python:latest"
       },
@@ -58,7 +58,7 @@
         "metadata": {
           "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
         },
-        "defaultValue": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-msi-linux"
+        "defaultValue": "https://raw.githubusercontent.com/sebastus/msi-linux-terraform/master"
       },
       "_artifactsLocationSasToken": {
         "type": "securestring",
@@ -86,7 +86,7 @@
         "metadata": {
           "description": "The VM SKU"
         },
-        "defaultValue": "16.04-LTS"
+        "defaultValue": "17.10"
       }
     },
     "variables": {
@@ -179,7 +179,7 @@
               "properties": {
                 "priority": 1000,
                 "sourceAddressPrefix": "*",
-                "protocol": "TCP",
+                "protocol": "Tcp",
                 "destinationPortRange": "22",
                 "access": "Allow",
                 "direction": "Inbound",
