@@ -113,5 +113,5 @@ chmod 755 $TFENVFILE
 chown tfuser:tfuser $TFENVFILE
 
 # create the container for remote state
-#az login --service-principal --tenant $TENANT_ID -u $CLIENT_ID -p $CLIENT_SECRET
-#az storage container create -n terraform-state --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_ACCOUNT_KEY
+az login --msi
+az storage container create -n terraform-state --account-name $STORAGE_ACCOUNT_NAME --account-key $STORAGE_ACCOUNT_KEY
