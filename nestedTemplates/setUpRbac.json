@@ -10,13 +10,12 @@
       }
     },
     "variables": {
-      "owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
-      "RBACResourceName":"[parameters('principalId')]"
+      "owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]"
     },
     "resources": [
       {
         "apiVersion": "2016-07-01",
-        "name": "[variables('RBACResourceName')]",
+        "name": "[parameters('principalId')]",
         "type": "Microsoft.Authorization/roleAssignments",
         "properties": {
           "roleDefinitionId": "[variables('owner')]",
